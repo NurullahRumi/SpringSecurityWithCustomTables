@@ -1,5 +1,6 @@
 package org.example.springsecuritywithcustom.controller;
 
+import org.example.springsecuritywithcustom.dto.LoginDto;
 import org.example.springsecuritywithcustom.dto.RegisterDto;
 import org.example.springsecuritywithcustom.entity.Role;
 import org.example.springsecuritywithcustom.entity.UserEntity;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +39,15 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new ResponseEntity<>("user login success!", HttpStatus.OK);
     }
 
 
